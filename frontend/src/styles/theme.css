@@ -1,0 +1,204 @@
+/* ========================================
+   🎨 PROFESSIONAL THEME SYSTEM
+   CSS Variables for Dynamic Theming
+   ======================================== */
+
+:root {
+  /* Default Light Theme */
+  --bg: #FFFFFF;
+  --bg-secondary: #FAFAFA;
+  --card-bg: #FFFFFF;
+  --text: #1F2937;
+  --text-secondary: #4B5563;
+  --text-muted: #6B7280;
+  --primary: #6366F1;
+  --primary-hover: #4F46E5;
+  --secondary: #0EA5E9;
+  --accent: #E5E7EB;
+  --border: #E5E7EB;
+  --border-hover: #D1D5DB;
+  --success: #10B981;
+  --error: #EF4444;
+  --shadow: rgba(0, 0, 0, 0.1);
+
+  /* Transitions */
+  --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-fast: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+  
+  /* Shadows */
+  --shadow-sm: 0 1px 2px 0 var(--shadow);
+  --shadow-md: 0 4px 6px -1px var(--shadow);
+  --shadow-lg: 0 10px 15px -3px var(--shadow);
+  --shadow-xl: 0 20px 25px -5px var(--shadow);
+}
+
+/* ========================================
+   UTILITY CLASSES
+   ======================================== */
+
+/* Backgrounds */
+.theme-bg {
+  background-color: var(--bg);
+  color: var(--text);
+  transition: var(--transition);
+}
+
+.theme-bg-secondary {
+  background-color: var(--bg-secondary);
+  color: var(--text);
+  transition: var(--transition);
+}
+
+.theme-bg-tertiary {
+  background-color: var(--bg-tertiary);
+  color: var(--text);
+  transition: var(--transition);
+}
+
+/* Text Colors */
+.theme-text {
+  color: var(--text);
+  transition: var(--transition);
+}
+
+.theme-text-secondary {
+  color: var(--text-secondary);
+  transition: var(--transition);
+}
+
+.theme-text-muted {
+  color: var(--text-muted);
+  transition: var(--transition);
+}
+
+/* Borders */
+.theme-border {
+  border-color: var(--border);
+  transition: var(--transition);
+}
+
+.theme-border-hover:hover {
+  border-color: var(--border-hover);
+}
+
+/* Cards */
+.theme-card {
+  background-color: var(--card-bg);
+  border: 1px solid var(--border);
+  color: var(--text);
+  transition: var(--transition);
+  border-radius: 0.75rem;
+  padding: 1rem;
+  box-shadow: var(--shadow-sm);
+}
+
+.theme-card:hover {
+  border-color: var(--border-hover);
+  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
+}
+
+.theme-card-flat {
+  background-color: var(--card-bg);
+  border: 1px solid var(--border);
+  color: var(--text);
+  transition: var(--transition);
+  border-radius: 0.75rem;
+  padding: 1rem;
+}
+
+/* Buttons */
+.theme-btn-primary {
+  background-color: var(--primary);
+  color: white;
+  padding: 0.5rem 1.5rem;
+  border-radius: 0.5rem;
+  font-weight: 600;
+  transition: var(--transition);
+  border: none;
+  cursor: pointer;
+}
+
+.theme-btn-primary:hover {
+  background-color: var(--primary-hover);
+  transform: translateY(-1px);
+}
+
+.theme-btn-secondary {
+  background-color: var(--secondary);
+  color: white;
+  padding: 0.5rem 1.5rem;
+  border-radius: 0.5rem;
+  font-weight: 600;
+  transition: var(--transition);
+  border: none;
+  cursor: pointer;
+}
+
+.theme-btn-secondary:hover {
+  opacity: 0.9;
+  transform: translateY(-1px);
+}
+
+.theme-btn-outline {
+  background-color: transparent;
+  color: var(--primary);
+  border: 2px solid var(--primary);
+  padding: 0.5rem 1.5rem;
+  border-radius: 0.5rem;
+  font-weight: 600;
+  transition: var(--transition);
+  cursor: pointer;
+}
+
+.theme-btn-outline:hover {
+  background-color: var(--primary);
+  color: white;
+}
+
+/* Input Fields */
+.theme-input {
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--border);
+  color: var(--text);
+  padding: 0.75rem;
+  border-radius: 0.5rem;
+  transition: var(--transition);
+  width: 100%;
+}
+
+.theme-input:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+}
+
+.theme-input::placeholder {
+  color: var(--text-muted);
+}
+
+/* Links */
+.theme-link {
+  color: var(--primary);
+  transition: var(--transition);
+  text-decoration: none;
+}
+
+.theme-link:hover {
+  color: var(--primary-hover);
+  text-decoration: underline;
+}
+
+/* Status Colors */
+.theme-success {
+  color: var(--success);
+}
+
+.theme-error {
+  color: var(--error);
+}
+
+/* Smooth Transitions */
+* {
+  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+}

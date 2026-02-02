@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CareerNexus AI - Career Guidance Platform</title>
+    <link rel="stylesheet" href="static/style.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.js"></script>
+</head>
+<body>
+    <!-- Minimalist Floating Navigation -->
+    <nav class="floating-nav">
+        <div class="nav-container">
+            <a href="#assess" class="nav-tab active" data-section="assess">
+                <i class="fas fa-check-circle"></i>
+                <span>Assess</span>
+            </a>
+            <a href="#results" class="nav-tab" data-section="results">
+                <i class="fas fa-chart-line"></i>
+                <span>Results</span>
+            </a>
+            <a href="#roadmap" class="nav-tab" data-section="roadmap">
+                <i class="fas fa-road"></i>
+                <span>Roadmap</span>
+            </a>
+        </div>
+    </nav>
+
+    <!-- Hero Section - Stylish Header -->
+    <section class="hero">
+        <div class="hero-content">
+            <h1 style="font-size: 3.5rem; background: linear-gradient(135deg, #4F46E5 0%, #7C3AED 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">
+                Career Guidance
+            </h1>
+            <p style="font-size: 1.3rem; color: #fff; margin-top: 1rem;">Discover Your Perfect Career Path</p>
+            <p class="subtitle">Get AI-powered insights tailored to your skills, interests, and aspirations</p>
+            <button class="cta-btn" onclick="scrollToAssess()">🚀 Begin Assessment</button>
+        </div>
+        <div class="hero-bg"></div>
+    </section>
+
+    <!-- Assessment Form Section -->
+    <section id="assess" class="assessment">
+        <div class="container">
+            <!-- Progress Indicator -->
+            <div class="progress-header">
+                <div class="progress-info">
+                    <h2>Career Assessment</h2>
+                    <p class="section-subtitle">Answer honestly about your skills, interests, and academic performance</p>
+                </div>
+                <div class="progress-bar-container">
+                    <div class="progress-label">
+                        <span>Progress:</span>
+                        <span id="progressPercent">0%</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progressFill"></div>
+                    </div>
+                </div>
+            </div>
+
+            <form id="assessmentForm" class="form-container">
+                <!-- Skills Section -->
+                <div class="form-section">
+                    <h3><i class="fas fa-code"></i> Technical Skills</h3>
+                    <p class="form-hint">Rate your proficiency (1-5)</p>
+
+                    <div class="skills-grid">
+                        <div class="skill-input">
+                            <label>Python</label>
+                            <div class="slider-container">
+                                <input type="range" id="Python" name="Python" min="0" max="5" value="0" class="slider">
+                                <span class="slider-value">0</span>
+                            </div>
+                        </div>
+                        <div class="skill-input">
+                            <label>Java</label>
+                            <div class="slider-container">
+                                <input type="range" id="Java" name="Java" min="0" max="5" value="0" class="slider">
+                                <span class="slider-value">0</span>
+                            </div>
+                        </div>
+                        <div class="skill-input">
+                            <label>SQL</label>
+                            <div class="slider-container">
+                                <input type="range" id="SQL" name="SQL" min="0" max="5" value="0" class="slider">
+                                <span class="slider-value">0</span>
+                            </div>
+                        </div>
+                        <div class="skill-input">
+                            <label>Machine Learning</label>
+                            <div class="slider-container">
+                                <input type="range" id="ML" name="ML" min="0" max="5" value="0" class="slider">
+                                <span class="slider-value">0</span>
+                            </div>
+                        </div>
+                        <div class="skill-input">
+                            <label>Communication</label>
+                            <div class="slider-container">
+                                <input type="range" id="Communication" name="Communication" min="0" max="5" value="0" class="slider">
+                                <span class="slider-value">0</span>
+                            </div>
+                        </div>
+                        <div class="skill-input">
+                            <label>Problem Solving</label>
+                            <div class="slider-container">
+                                <input type="range" id="ProblemSolving" name="ProblemSolving" min="0" max="5" value="0" class="slider">
+                                <span class="slider-value">0</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Interests Section -->
+                <div class="form-section">
+                    <h3><i class="fas fa-heart"></i> Career Interests</h3>
+                    <p class="form-hint">Rate your interest level (0-100)</p>
+
+                    <div class="interests-grid">
+                        <div class="interest-input">
+                            <label>Data & Analytics</label>
+                            <div class="slider-container">
+                                <input type="range" id="Data_Interest" name="Data_Interest" min="0" max="100" value="50" class="slider">
+                                <span class="slider-value">50</span>
+                            </div>
+                        </div>
+                        <div class="interest-input">
+                            <label>Software Development</label>
+                            <div class="slider-container">
+                                <input type="range" id="Development_Interest" name="Development_Interest" min="0" max="100" value="50" class="slider">
+                                <span class="slider-value">50</span>
+                            </div>
+                        </div>
+                        <div class="interest-input">
+                            <label>Management & Leadership</label>
+                            <div class="slider-container">
+                                <input type="range" id="Management_Interest" name="Management_Interest" min="0" max="100" value="50" class="slider">
+                                <span class="slider-value">50</span>
+                            </div>
+                        </div>
+                        <div class="interest-input">
+                            <label>Research & Innovation</label>
+                            <div class="slider-container">
+                                <input type="range" id="Research_Interest" name="Research_Interest" min="0" max="100" value="50" class="slider">
+                                <span class="slider-value">50</span>
+                            </div>
+                        </div>
+                        <div class="interest-input">
+                            <label>Design & UX</label>
+                            <div class="slider-container">
+                                <input type="range" id="Design_Interest" name="Design_Interest" min="0" max="100" value="50" class="slider">
+                                <span class="slider-value">50</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Academic Performance -->
+                <div class="form-section">
+                    <h3><i class="fas fa-graduation-cap"></i> Academic Performance</h3>
+
+                    <div class="form-group">
+                        <label>CGPA (0-10):</label>
+                        <div class="input-with-slider">
+                            <input type="range" id="CGPA" name="CGPA" min="0" max="10" step="0.1" value="7" class="slider">
+                            <input type="number" id="CGPAValue" min="0" max="10" step="0.1" value="7" class="number-input">
+                            <span>/10</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Personal Info -->
+                <div class="form-section">
+                    <h3><i class="fas fa-user"></i> Personal Information</h3>
+
+                    <div class="form-group">
+                        <label>Full Name:</label>
+                        <input type="text" id="name" name="name" placeholder="Enter your full name" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Email:</label>
+                        <input type="email" id="email" name="email" placeholder="Enter your email" required>
+                    </div>
+                </div>
+
+                <!-- Submit Button -->
+                <button type="submit" class="submit-btn">
+                    <i class="fas fa-wand-magic-sparkles"></i> Get AI Career Prediction
+                </button>
+            </form>
+        </div>
+    </section>
+
+    <!-- Results Section -->
+    <section id="results" class="results" style="display: none;">
+        <div class="container">
+            <h2>Your Career Analysis</h2>
+
+            <!-- Primary Career Card -->
+            <div class="card primary-career-card">
+                <h3>🎯 Primary Career Recommendation</h3>
+                <div class="career-display">
+                    <h2 id="careerTitle">Loading...</h2>
+                    <div class="confidence-meter">
+                        <div class="confidence-bar" id="confidenceBar"></div>
+                        <p id="confidenceText">Confidence: 0%</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Readiness Score -->
+            <div class="card readiness-card">
+                <h3>📊 Career Readiness Score</h3>
+                <div class="readiness-display">
+                    <div class="circular-progress" id="readinessCircle">
+                        <svg viewBox="0 0 100 100">
+                            <circle cx="50" cy="50" r="45" class="progress-bg"></circle>
+                            <circle cx="50" cy="50" r="45" class="progress-fill"></circle>
+                        </svg>
+                        <div class="progress-text">
+                            <span id="readinessScore">0</span>
+                            <span>/100</span>
+                        </div>
+                    </div>
+                    <div class="readiness-breakdown">
+                        <p id="readinessStatus">On Track</p>
+                        <div class="breakdown-items">
+                            <div class="breakdown-item">
+                                <label>Skills Match</label>
+                                <div class="mini-bar"><div id="skillsBar"></div></div>
+                                <span id="skillsScore">0%</span>
+                            </div>
+                            <div class="breakdown-item">
+                                <label>Academic Score</label>
+                                <div class="mini-bar"><div id="academicBar"></div></div>
+                                <span id="academicScore">0%</span>
+                            </div>
+                            <div class="breakdown-item">
+                                <label>Interest Alignment</label>
+                                <div class="mini-bar"><div id="interestBar"></div></div>
+                                <span id="interestScore">0%</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Top 3 Careers -->
+            <div class="card">
+                <h3>🏆 Top 3 Career Recommendations</h3>
+                <div class="careers-list" id="top3Careers">
+                    <div class="career-item">
+                        <div class="career-rank">1</div>
+                        <div class="career-info">
+                            <span class="career-name">Loading...</span>
+                            <span class="career-confidence">0%</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Roadmap Section -->
+    <section id="roadmap" class="roadmap" style="display: none;">
+        <div class="container">
+            <h2>6-Month Career Roadmap</h2>
+            <p class="section-subtitle">Personalized action plan for <span id="roadmapCareer">your career</span></p>
+
+            <div class="roadmap-timeline" id="roadmapTimeline">
+                <!-- Timeline will be filled by JS -->
+            </div>
+
+            <div class="action-buttons">
+                <button class="btn btn-primary" onclick="downloadReport()">
+                    <i class="fas fa-download"></i> Download PDF Report
+                </button>
+                <button class="btn btn-secondary" onclick="openChat()">
+                    <i class="fas fa-comments"></i> Ask AI Chat
+                </button>
+                <button class="btn btn-secondary" onclick="resetAssessment()">
+                    <i class="fas fa-redo"></i> New Assessment
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Chat Modal -->
+    <div id="chatModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <span class="close" onclick="closeChat()">&times;</span>
+            <h2>CareerNexus AI Chat</h2>
+            
+            <div class="chat-container" id="chatContainer">
+                <div class="chat-message bot-message">
+                    <p>Hi! I'm your AI career advisor. Ask me questions about your career path!</p>
+                </div>
+            </div>
+
+            <div class="chat-input-area">
+                <div class="quick-questions">
+                    <button class="quick-btn" onclick="askQuestion('Why is this career suitable for me?')">
+                        Why suitable?
+                    </button>
+                    <button class="quick-btn" onclick="askQuestion('How can I improve my score?')">
+                        Improve score?
+                    </button>
+                    <button class="quick-btn" onclick="askQuestion('What jobs can I apply for?')">
+                        Jobs to apply?
+                    </button>
+                </div>
+                <div class="chat-input-group">
+                    <input type="text" id="chatInput" placeholder="Ask a question..." onkeypress="handleChatKeypress(event)">
+                    <button onclick="sendChatMessage()" class="send-btn"><i class="fas fa-paper-plane"></i></button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading Spinner -->
+    <div id="loadingSpinner" class="loading-spinner" style="display: none;">
+        <div class="spinner"></div>
+        <p>Analyzing your profile...</p>
+    </div>
+
+    <!-- Scripts -->
+    <script src="static/script.js"></script>
+</body>
+</html>
