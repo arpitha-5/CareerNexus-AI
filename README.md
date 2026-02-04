@@ -450,8 +450,8 @@ Before you can run CareerNexus, ensure you have the following installed:
 
 ```bash
 # Using Git
-git clone https://github.com/srinath-neurospark/Career-Nexus-App.git
-cd Career-Nexus-App
+git clone https://github.com/arpitha-5/CareerNexus-AI
+cd CareerNexus-AI
 
 # Or download as ZIP and extract
 ```
@@ -1069,7 +1069,7 @@ echo ".env" >> .gitignore
 git add .
 git commit -m "Initial commit - CareerNexus Backend"
 git branch -M main
-git remote add origin https://github.com/YOUR_USERNAME/Career-Nexus-App.git
+git remote add origin https://github.com/YOUR_USERNAME/CareerNexus-AI.git
 git push -u origin main
 ```
 
@@ -1341,8 +1341,8 @@ npm start
 - Documentation
 
 ### **Contact & Social**
-- **GitHub**: https://github.com/srinath-neurospark
-- **LinkedIn**: (https://www.linkedin.com/in/arpitha-medarametla)
+- **GitHub**: https://github.com/arpitha-5/CareerNexus-AI
+- **LinkedIn**: https://www.linkedin.com/in/arpitha-medarametla
 
 ### **About Neurospark**
 Neurospark specializes in:
@@ -1363,7 +1363,7 @@ We welcome contributions! Here's how you can help:
 1. **Fork the Repository**
    ```bash
    # Click "Fork" on GitHub
-   git clone https://github.com/YOUR_USERNAME/Career-Nexus-App.git
+   git clone https://github.com/YOUR_USERNAME/CareerNexus-AI.git
    ```
 
 2. **Create Feature Branch**
@@ -1456,7 +1456,6 @@ A: Yes! The project structure is modular and easy to extend.
 
 - **Issues**: Report on GitHub Issues
 - **Discussions**: Use GitHub Discussions for questions
-- **Email**: team@neurospark.dev (if available)
 - **Documentation**: See README files in each directory
 
 ---
@@ -1495,10 +1494,10 @@ A: Yes! The project structure is modular and easy to extend.
 
 If you find CareerNexus helpful, please star the repository on GitHub to support our work!
 
-⭐(https://github.com/arpitha-5/CareerNexus-AI)
+⭐ https://github.com/arpitha-5/CareerNexus-AI
 
 ---
 
 **Happy Coding! 🚀**
 
-For any questions or support, reach out to the Neurospark team. We're here to help!
+
