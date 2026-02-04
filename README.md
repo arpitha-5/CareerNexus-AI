@@ -1495,7 +1495,7 @@ A: Yes! The project structure is modular and easy to extend.
 
 If you find CareerNexus helpful, please star the repository on GitHub to support our work!
 
-⭐ https://github.com/arpith-5/CareerNexus AI
+⭐(https://github.com/arpitha-5/CareerNexus-AI)
 
 ---
 
