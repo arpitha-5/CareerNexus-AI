@@ -3,7 +3,9 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate, useLocation } from 'react-router-dom';
 import Navbar from '../../components/common/Navbar.jsx';
 import FloatingChatbot from '../../components/ai/FloatingChatbot.jsx';
-import { generateSkillGaps } from '../../api/aiApi.js';
+import SkillDependencyGraph from '../../components/career/SkillDependencyGraph.jsx';
+import RecruiterSignalCard from '../../components/career/RecruiterSignalCard.jsx';
+import { generateSkillGaps, evaluateHiringSignal } from '../../api/aiApi.js';
 
 const SkillGapPage = () => {
     const navigate = useNavigate();
@@ -15,8 +17,10 @@ const SkillGapPage = () => {
         readinessScore: 0,
         missingSkills: [],
         strongSkills: [],
+        dependencyGraph: [],
         aiInsight: 'Analyzing your profile...'
     });
+    const [hiringSignal, setHiringSignal] = useState(null);
 
     useEffect(() => {
         const fetchSkillGaps = async () => {
@@ -64,27 +68,75 @@ const SkillGapPage = () => {
                         }
                     }
                 ],
+                dependencyGraph: [
+                    {
+                        skill: 'JavaScript',
+                        unlocks: ['React', 'Node.js'],
+                        reason: 'The core language for all web development.',
+                        topics: ['ES6+ Syntax', 'Async/Await', 'DOM Manipulation', 'Event Loop'],
+                        resources: [
+                            { name: 'MDN Web Docs', url: 'https://developer.mozilla.org/en-US/docs/Web/JavaScript' },
+                            { name: 'JavaScript.info', url: 'https://javascript.info/' }
+                        ]
+                    },
+                    {
+                        skill: 'React',
+                        prerequisites: ['JavaScript'],
+                        unlocks: ['Next.js', 'Redux'],
+                        reason: 'Dominant frontend library requiring solid JS fundamentals.',
+                        topics: ['Components & Props', 'Hooks (useState, useEffect)', 'Context API', 'React Router'],
+                        resources: [
+                            { name: 'React Official Docs', url: 'https://react.dev/' },
+                            { name: 'Epic React by Kent C. Dodds', url: 'https://epicreact.dev/' }
+                        ]
+                    },
+                    {
+                        skill: 'Node.js',
+                        prerequisites: ['JavaScript'],
+                        unlocks: ['Express', 'Backend Systems'],
+                        reason: 'Server-side runtime for JavaScript.',
+                        topics: ['Event Emitter', 'File System (fs)', 'HTTP Module', 'Streams & Buffers'],
+                        resources: [
+                            { name: 'Node.js Crash Course', url: 'https://nodejs.org/en/docs/guides/getting-started-guide/' }
+                        ]
+                    }
+                ],
                 aiInsight: `Based on your profile, you are a strong candidate for Junior roles, but mastering System Design and DevOps will fast-track you to Mid-Senior levels in ${targetRole}.`
             };
 
             try {
-                // Call the new dynamic API
-                const response = await generateSkillGaps(targetRole);
+                // Parallel Fetch: Skill Gaps + Hiring Signal
+                const [gapDataResponse, signalResponse] = await Promise.all([
+                    generateSkillGaps(targetRole),
+                    evaluateHiringSignal(targetRole)
+                ]);
 
-                // Validate response - if empty arrays, treat as failure for demo purposes to avoid blank screen
-                if (response.data && response.data.missingSkills && response.data.missingSkills.length > 0) {
+                // Handle Gap Data
+                if (gapDataResponse.data && gapDataResponse.data.missingSkills && gapDataResponse.data.missingSkills.length > 0) {
                     setGapData({
-                        ...response.data,
-                        // Ensure target role is reflected even if API doesn't return it
-                        targetRole: response.data.targetRole || targetRole
+                        ...gapDataResponse.data,
+                        targetRole: gapDataResponse.data.targetRole || targetRole
                     });
                 } else {
                     console.warn("API returned empty data, using fallback.");
                     setGapData(fallbackData);
                 }
+
+                // Handle Hiring Signal
+                if (signalResponse.data) {
+                    setHiringSignal(signalResponse.data);
+                }
             } catch (error) {
-                console.error("Failed to fetch skill gaps, using fallback", error);
+                console.error("Failed to fetch AI analysis", error);
                 setGapData(fallbackData);
+                // Fallback signal data for demo
+                setHiringSignal({
+                    resumeSignalStrength: 72,
+                    skillMatchScore: 65,
+                    projectRelevanceScore: 58,
+                    interviewProbability: 45,
+                    recruiterInsight: "Strong potential in frontend but lacks enterprise-scale backend experience. Projects are good but need more deployment details."
+                });
             } finally {
                 setLoading(false);
             }
@@ -132,7 +184,11 @@ const SkillGapPage = () => {
                     <p className="text-lg text-slate-600 max-w-2xl mx-auto">
                         Identified gaps between your current skill set and the requirements for <span className="font-bold text-slate-800">{gapData.targetRole}</span>.
                     </p>
+
                 </motion.div>
+
+                {/* Recruiter Signal Evaluator */}
+                <RecruiterSignalCard signalData={hiringSignal} />
 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
                     {/* Readiness Score Card */}
@@ -190,6 +246,9 @@ const SkillGapPage = () => {
                         </div>
                     </motion.div>
                 </div>
+
+                {/* Dependency Graph */}
+                <SkillDependencyGraph graphData={gapData.dependencyGraph} />
 
                 {/* Missing Skills List */}
                 <div className="mb-12">
@@ -285,7 +344,7 @@ const SkillGapPage = () => {
 
             </main>
             <FloatingChatbot />
-        </div>
+        </div >
     );
 };
 

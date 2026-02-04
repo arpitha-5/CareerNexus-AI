@@ -80,7 +80,7 @@ const CareerGuidancePage = () => {
             career: resultData.recommendedCareer,
             confidence: resultData.confidenceScore
           }],
-          readinessScore: resultData.confidenceScore, // Using confidence as proxy
+          readinessScore: resultData.readiness_score || resultData.readinessScore || resultData.confidenceScore, // prioritize explicit readiness score
           academicScore: 85, // Placeholder
           skillsScore: 90, // Placeholder
           interestScore: 95, // Placeholder

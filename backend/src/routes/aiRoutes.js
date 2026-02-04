@@ -15,6 +15,9 @@ import {
   analyzeJobRoleMatchController,
   downloadCareerReportController,
   analyzeCareerRiskController,
+  compareRolesController,
+  generateCompanyInterviewController,
+  evaluateHiringSignalController
 } from '../controllers/aiController.js';
 
 
@@ -33,5 +36,8 @@ router.post('/career', protect, getCareerGuidanceController);
 router.post('/career/match-role', protect, analyzeJobRoleMatchController);
 router.post('/career/report', protect, downloadCareerReportController);
 router.post('/career-risk', protect, analyzeCareerRiskController);
+router.post('/compare-roles', protect, compareRolesController);
+router.post('/interview/company-questions', protect, generateCompanyInterviewController);
+router.post('/career/evaluate-signal', protect, evaluateHiringSignalController);
 
 export default router;

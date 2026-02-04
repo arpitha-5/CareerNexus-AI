@@ -24,7 +24,7 @@ const ChatbotWindow = ({ onClose, onCollapse }) => {
     setText('');
     setLoading(true);
     setError(null);
-    
+
     try {
       const { data } = await chatbotMessage(userMsg.content);
       const botMsg = { role: 'assistant', content: data.reply, timestamp: new Date() };
@@ -32,11 +32,11 @@ const ChatbotWindow = ({ onClose, onCollapse }) => {
     } catch (err) {
       console.error(err);
       setError('Failed to get response. Please try again.');
-      const errorMsg = { 
-        role: 'assistant', 
-        content: 'Sorry, I\'m having trouble connecting right now. Please try again in a moment.', 
+      const errorMsg = {
+        role: 'assistant',
+        content: 'Sorry, I\'m having trouble connecting right now. Please try again in a moment.',
         timestamp: new Date(),
-        isError: true 
+        isError: true
       };
       setMessages((prev) => [...prev, errorMsg]);
     } finally {
@@ -108,7 +108,7 @@ const ChatbotWindow = ({ onClose, onCollapse }) => {
             <p className="text-[10px] text-gray-500 mt-1">Ask me about your career path!</p>
           </div>
         )}
-        
+
         <AnimatePresence>
           {messages.map((m, i) => (
             <motion.div
@@ -119,25 +119,23 @@ const ChatbotWindow = ({ onClose, onCollapse }) => {
               className={`flex ${m.role === 'user' ? 'justify-end' : 'justify-start'}`}
             >
               <div
-                className={`max-w-[75%] rounded-lg px-3 py-2 text-xs shadow-sm ${
-                  m.role === 'user'
+                className={`max-w-[75%] rounded-lg px-3 py-2 text-xs shadow-sm ${m.role === 'user'
                     ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-br-sm'
                     : m.isError
-                    ? 'bg-red-50 text-red-700 border border-red-200 rounded-bl-sm'
-                    : 'bg-white text-gray-800 border border-gray-200 rounded-bl-sm'
-                }`}
+                      ? 'bg-red-50 text-red-700 border border-red-200 rounded-bl-sm'
+                      : 'bg-white text-gray-800 border border-gray-200 rounded-bl-sm'
+                  }`}
               >
                 <p className="whitespace-pre-wrap leading-snug">{m.content}</p>
-                <p className={`text-[9px] mt-1 ${
-                  m.role === 'user' ? 'text-white/70' : 'text-gray-400'
-                }`}>
+                <p className={`text-[9px] mt-1 ${m.role === 'user' ? 'text-white/70' : 'text-gray-400'
+                  }`}>
                   {formatTime(m.timestamp)}
                 </p>
               </div>
             </motion.div>
           ))}
         </AnimatePresence>
-        
+
         {loading && (
           <motion.div
             initial={{ opacity: 0 }}
@@ -162,7 +160,7 @@ const ChatbotWindow = ({ onClose, onCollapse }) => {
           value={text}
           onChange={(e) => setText(e.target.value)}
           onKeyDown={(e) => e.key === 'Enter' && !e.shiftKey && send()}
-          className="flex-1 rounded-lg bg-gray-100 px-3 py-2 text-xs text-gray-800 outline-none ring-2 ring-transparent focus:ring-purple-500 transition-all placeholder:text-gray-500"
+          className="flex-1 rounded-lg !bg-white px-3 py-2 text-xs !text-black outline-none ring-2 ring-gray-200 focus:ring-purple-500 transition-all placeholder:text-gray-500"
           placeholder="Type message..."
           disabled={loading}
         />

@@ -7,18 +7,18 @@ passport.use(
     {
       clientID: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-      callbackURL: process.env.GOOGLE_CALLBACK_URL,
+      callbackURL: process.env.GOOGLE_CALLBACK_URL || "http://localhost:5001/auth/google/callback",
     },
     async (accessToken, refreshToken, profile, done) => {
       try {
         console.log('🔑 Google profile received:', profile.displayName, profile.emails?.[0]?.value);
-        
+
         const email = profile.emails?.[0]?.value;
         if (!email) {
           console.error('❌ No email in Google profile');
           return done(new Error('No email provided by Google'), null);
         }
-        
+
         let user = await User.findOne({ email });
 
         if (!user) {

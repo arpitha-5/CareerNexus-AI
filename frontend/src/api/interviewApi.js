@@ -74,8 +74,7 @@ const interviewApi = {
    */
   getCompanyQuestions: async (company, role) => {
     try {
-      const response = await axiosClient.post('/interview/questions', {
-        focusWeakAreas: true,
+      const response = await axiosClient.post('/interview/company-questions', {
         company,
         role
       });

@@ -107,37 +107,82 @@ function calculateBasicATSScore(text, parsed) {
 
 // Skill Gap Service
 // Skill Gap Service - Advanced
-const DETAILED_SKILL_GAP_PROMPT = `You are an expert technical career counselor. Compare the User's Resume/Skills against the Target Role.
-Generate a detailed Skill Gap Analysis in STRICT JSON format.
+// Skill Gap Service - Advanced
+const DETAILED_SKILL_GAP_PROMPT = `You are an expert technical career counselor. 
+Compare the User's Real Resume Data against the Target Job Role.
+Generate a fully dynamic, data-driven Skill Gap Analysis in STRICT JSON.
 
-Output Structure:
+INPUTS:
+- Resume Skills & Experience
+- Target Role Requirements
+
+PROCESS:
+1. Extract technical skills from the resume.
+2. Identify the core requirements for the Target Role.
+3. Compare:
+   - MATCHED: Skills the user HAS.
+   - MISSING: Critical skills the user NEEDS.
+   - WEAK: Skills mentioned but lack depth (e.g., listed but no project usage).
+4. Prioritize missing skills (High/Medium/Low).
+
+OUTPUT STRUCTURE (STRICT JSON):
 {
   "targetRole": "string (The requested role)",
-  "readinessScore": number (0-100, be realistic based on missing skills),
-  "strongSkills": ["string" (List 4-6 matches)],
+  "readinessScore": number (0-100, calculated based on critical missing skills),
+  "strongSkills": ["string" (List matched skills proven in resume)],
+  "weakSkills": ["string" (Skills present but weak)"],
   "missingSkills": [
     {
       "name": "string (Skill Name)",
-      "importance": "High|Medium",
-      "timeToLearn": "string (e.g. '2 Weeks', '1 Month')",
-      "reason": "string (Why this is critical for the role)",
-      "category": "string (e.g. DevOps, Backend, Fundamentals)",
+      "importance": "High|Medium|Low",
+      "priority": "High|Medium|Low",
+      "timeToLearn": "string (e.g. '2 Weeks')",
+      "reason": "string (Specific reason why this is needed for this role)",
+      "category": "string (e.g. DevOps, Database, Frontend)",
       "learningPlan": {
-        "description": "string (Brief specific guidance)",
-        "steps": ["string" (3-4 actionable steps)]
+        "description": "string (Actionable guidance)",
+        "steps": ["string" (3 detailed steps to master it)"]
       }
     }
   ],
-  "aiInsight": "string (A personalized summary of their standing)"
+  "aiInsight": "string (Summarize their standing: e.g., 'You are strong in X but missing Y which is critical for Z.')",
+  "dependencyGraph": [
+    {
+      "skill": "string (Missing Skill Name)",
+      "prerequisites": ["string (What they know that helps, e.g. JS -> React)"],
+      "unlocks": ["string (Advanced topics)"],
+      "reason": "string (Why this path?)",
+      "topics": ["string (Key sub-topics)"],
+      "resources": [{"name": "string", "url": "string"}]
+    }
+  ]
 }
 
-User Context provided below. If Resumie/Skills are empty, assume beginner level but still generate valid realistic gaps for the target role.`;
+IMPORTANT:
+- DO NOT use static or fake data.
+- If the resume is empty, explicitly state that in aiInsight and suggest building a foundation.
+- Be realistic. If they want 'Senior Architect' but have 1 year experience, give a low score and honest feedback.`;
 
 export const generateSkillProfile = async ({ userId, parsedResume, roleTarget }) => {
-  const userPrompt = JSON.stringify({
-    parsedResume: parsedResume || {},
-    targetRole: roleTarget || 'Full Stack Developer'
-  });
+  // Construct a rich user context
+  const userContext = {
+    role: roleTarget || 'Full Stack Developer',
+    resumeSkills: parsedResume?.technicalSkills || [],
+    experience: parsedResume?.experience || [],
+    projects: parsedResume?.projects || [],
+    tools: parsedResume?.tools || []
+  };
+
+  const userPrompt = `
+  TARGET ROLE: ${userContext.role}
+  
+  CANDIDATE RESUME:
+  - Technical Skills: ${userContext.resumeSkills.join(', ') || 'None listed'}
+  - Tools: ${userContext.tools.join(', ') || 'None listed'}
+  - Experience Scraps: ${JSON.stringify(userContext.experience).slice(0, 500)}
+  - Project Highlights: ${JSON.stringify(userContext.projects).slice(0, 500)}
+  
+  TASK: Generate a dynamic skill gap analysis. Identify what is missing for ${userContext.role}.`;
 
   const completion = await llmComplete({
     systemPrompt: DETAILED_SKILL_GAP_PROMPT,
@@ -153,19 +198,21 @@ export const generateSkillProfile = async ({ userId, parsedResume, roleTarget })
     // Fallback if LLM fails
     result = {
       targetRole: roleTarget,
-      readinessScore: 50,
-      strongSkills: ['Communication', 'Basic Programming'],
+      readinessScore: 40,
+      strongSkills: ['Assessment Failed'],
+      weakSkills: [],
       missingSkills: [
         {
-          name: 'Advanced Technical Skills',
+          name: 'Retry Analysis',
           importance: 'High',
-          timeToLearn: '4 Weeks',
-          reason: 'Required for this role',
-          category: 'Core',
-          learningPlan: { description: 'Focus on core tech', steps: ['Learn basics', 'Build project'] }
+          timeToLearn: 'Immediate',
+          reason: 'AI Service Interruption',
+          category: 'System',
+          learningPlan: { description: 'Please try again later.', steps: [] }
         }
       ],
-      aiInsight: 'Unable to analyze deeply at this moment. Focus on core requirements.'
+      aiInsight: 'We could not process your resume at this time. Please ensure your resume is uploaded correctly.',
+      dependencyGraph: []
     };
   }
 
@@ -180,86 +227,116 @@ export const generateSkillProfile = async ({ userId, parsedResume, roleTarget })
 
 // Learning Plan Service
 const LEARNING_PLAN_SYSTEM_PROMPT = `You are an expert personalized curriculum designer.
-Generate a WEEKLY LEARNING PLAN based on the user's RESUME, SKILL GAPS, and TARGET ROLE.
+Generate a dynamic, adaptive WEEKLY LEARNING PLAN based on the user's REAL SKILL GAPS and RESUME.
 
 INPUTS:
-- Resume: (Strengths, Projects, Experience)
-- Skill Gaps: (Missing skills, priority)
-- Target Role: (The goal)
-- Experience Level: (Student/Fresher/Pro)
+- Resume Context: (What they already know - DO NOT RETEACH these)
+- Skill Analysis: (Missing & Weak skills - THESE ARE THE FOCUS)
+- Target Role: (The end goal)
+- Experience Level: (Student/Fresher/Pro - Adjust depth accordingly)
 
-LOGIC:
-1. Analyze Resume: Identify what they already know (do NOT teach this again, just advanced practice).
-2. Prioritize Skill Gaps: These must be the focus of the early weeks.
-3. Custom Learning Order: Logical progression (e.g., HTML -> CSS -> JS).
-4. Difficulty Adjustment: If student, start with basics. If pro, jump to advanced patterns.
+GENERATION LOGIC:
+1. **Identify Priorities**:
+   - HIGH: Critical missing skills for the role.
+   - MEDIUM: Weak skills needing reinforcement.
+   - LOW: Nice-to-haves.
+2. **Structure the Path**:
+   - Start with foundational gaps (e.g., HTML/JS before React).
+   - Group related skills (e.g., "Frontend Week", "Database Week").
+   - Ensure explicit progression.
+3. **Adaptive Load**:
+   - Beginner? Slower pace, more basics.
+   - Professional? Fast-paced, advanced patterns.
 
 OUTPUT STRUCTURE (STRICT JSON):
 {
   "learningPath": [
     {
-      "week": "Week 1-2",
-      "theme": "string",
-      "topics": ["string"],
-      "why": "string (Explain relevance based on their resume/gaps)",
-      "projects": ["string"],
-      "practice": ["string (Specific exercises)"],
-      "quizzes": ["string (Topic to test)"],
-      "outcome": "string"
-    },
-    {
-      "week": "Week 3-4",
-      "theme": "string",
-      "topics": ["string"],
-      "why": "string",
-      "projects": ["string"],
-      "practice": ["string"],
-      "quizzes": ["string"],
-      "outcome": "string"
-    },
-    ... (continue for 8 weeks)
+      "week": "Week 1",
+      "topics": ["string (Specific skill focus)"],
+      "projects": ["string (Hands-on task)"],
+      "practice": ["string (Specific exercise)"],
+      "quizzes": ["string (Key concept to test)"],
+      "reason": "string (Valid logic: 'You lack X, which is required for Y')"
+    }
   ],
-  "skillLevels": { "SkillName": 0-100 },
-  "metadata": "This learning path was generated based on resume analysis and skill gaps."
+  "estimatedCompletionTime": "string (e.g. '8 Weeks')",
+  "confidenceLevel": "High|Medium|Low",
+  "metadata": "User-specific generated plan"
 }
 
-Do not be generic. Reference their specific background.`;
+RULES:
+- NO STATIC LISTS. If the user knows React, do NOT teach React basics.
+- Be specific. Instead of "Learn Databases", say "Learn MongoDB Aggregations".
+- If gaps are huge, create a longer plan (up to 12 weeks).
+- If gaps are small, create a focused short plan (2-4 weeks).`;
 
 export const generateLearningPlan = async ({ userId, skillProfile, resumeData, userContext }) => {
-  const userPrompt = JSON.stringify({
-    targetRole: skillProfile.roleTarget,
-    skillGaps: skillProfile.missingSkills,
-    currentSkills: skillProfile.currentSkills || skillProfile.strongSkills,
-    resumeSummary: resumeData?.parsed ? {
-      skills: resumeData.parsed.technicalSkills,
-      experience: resumeData.parsed.experience,
-      projects: resumeData.parsed.projects
-    } : "No resume available",
-    experienceLevel: userContext?.experience || "Student"
-  });
+  // 1. Prepare Rich User Context
+  const context = {
+    role: skillProfile.roleTarget || 'Full Stack Developer',
+    experienceLevel: userContext?.experience || 'Beginner',
+    knownSkills: skillProfile.strongSkills || [],
+    missingSkills: skillProfile.missingSkills || [],
+    weakSkills: skillProfile.weakSkills || [], // Now available from Skill Engine
+    resumeHighlights: resumeData?.parsed?.projects?.slice(0, 3) || []
+  };
 
+  const userPrompt = `
+  TARGET ROLE: ${context.role}
+  EXPERIENCE LEVEL: ${context.experienceLevel}
+
+  SKILLS TO SKIP (Already Known):
+  ${JSON.stringify(context.knownSkills)}
+
+  CRITICAL GAPS (Must Learn):
+  ${JSON.stringify(context.missingSkills)}
+
+  WEAK AREAS (Reinforce):
+  ${JSON.stringify(context.weakSkills)}
+
+  TASK:
+  Create a custom learning path to bridge these specific gaps.
+  - If they miss 'Docker', Week 1 should be 'Containerization'.
+  - If they are weak in 'React', include 'Advanced Patterns'.
+  - DO NOT teach what they already know.
+  `;
+
+  // 2. Call LLM
   const completion = await llmComplete({ systemPrompt: LEARNING_PLAN_SYSTEM_PROMPT, userPrompt });
-  const cleanedCompletion = stripMarkdown(completion);
+
   let result;
   try {
+    const cleanedCompletion = stripMarkdown(completion);
     result = JSON.parse(cleanedCompletion);
   } catch (err) {
     console.error("Learning Plan Parsing Error", err);
-    // Fallback
+    // Dynamic Fallback based on Role
     result = {
       learningPath: [
-        { week: "Week 1", theme: "Fundamentals", topics: ["Basics"], why: "Fallback plan", projects: ["Simple App"], practice: ["Basic Refresher"], outcome: "Start learning" }
+        {
+          week: "Week 1",
+          topics: ["Gap Analysis Retry"],
+          projects: ["Re-upload Resume"],
+          practice: ["Check Connection"],
+          quizzes: [],
+          reason: "AI Generation Temporary Failure"
+        }
       ],
-      skillLevels: {},
-      metadata: "Generated via fallback."
+      estimatedCompletionTime: "Unknown",
+      confidenceLevel: "Low",
+      metadata: "Fallback"
     };
   }
 
+  // 3. Save to DB (Preserve Schema)
   const doc = await LearningPath.findOneAndUpdate(
     { user: userId },
     {
       learningPath: result.learningPath,
-      skillLevels: result.skillLevels,
+      skillLevels: {}, // Deprecated or unused in new logic but kept for schema
+      estimatedTime: result.estimatedCompletionTime,
+      confidence: result.confidenceLevel,
       lastRecalculatedAt: new Date()
     },
     { upsert: true, new: true }
@@ -269,10 +346,11 @@ export const generateLearningPlan = async ({ userId, skillProfile, resumeData, u
 
 // Adaptive Engine
 export const recalculateAdaptivePlan = async (userId) => {
-  const [quizStats, progress, skillProfile] = await Promise.all([
+  const [quizStats, progress, skillProfile, resumeData] = await Promise.all([
     QuizHistory.find({ user: userId }).sort({ createdAt: -1 }).limit(20),
     ProgressTracking.findOne({ user: userId }),
-    SkillProfile.findOne({ user: userId })
+    SkillProfile.findOne({ user: userId }),
+    ResumeData.findOne({ user: userId })
   ]);
 
   const avgScore =
@@ -302,7 +380,7 @@ export const recalculateAdaptivePlan = async (userId) => {
     : null;
 
   if (adjustedSkillProfile) {
-    await generateLearningPlan({ userId, skillProfile: adjustedSkillProfile });
+    await generateLearningPlan({ userId, skillProfile: adjustedSkillProfile, resumeData });
   }
 
   const plan = await LearningPath.findOne({ user: userId });
@@ -357,7 +435,8 @@ Return STRICT JSON only:
 {
   "career": "Career Title",
   "confidence": 85,
-  "reason": "Detailed explanation of why this career matches their profile",
+  "confidence": 85,
+  "reason": "Detailed explanation using bullet points. Cite specific skills/experience from their profile (e.g., 'Your Project X demonstrates Y').",
   "skill_gaps": [
     {
       "skill": "Skill Name",
@@ -497,6 +576,15 @@ Based on this profile, recommend the ideal career with detailed skill gaps analy
         readiness_score: 72,
         readiness_explanation: 'Your technical foundation is strong (80%), interests align well (85%), and academics support this path (75%). Focus on practical projects to improve hands-on experience.'
       };
+    }
+
+    // Persist Readiness Score and Analytics
+    if (guidance && guidance.readiness_score) {
+      await User.findByIdAndUpdate(userId, {
+        'analytics.careerReadiness': guidance.readiness_score,
+        'analytics.skillStrength': guidance.confidence || 0,
+        'profile.careerGoal': guidance.career
+      });
     }
 
     return {
@@ -732,6 +820,116 @@ Analyze the risk and stability for this role.`;
       ai_insight: 'Service temporarily unavailable. Defaulting to general market trends.',
       risk_mitigation: ['Continuous Learning', 'Networking', 'Diversify Skills'],
       future_proofing_tip: 'Stay updated with AI trends.'
+    };
+  }
+};
+
+const HIRING_SIGNAL_PROMPT = `You are a Senior Tech Recruiter at a top-tier company (e.g., Google, Amazon, Microsoft).
+You are evaluating this candidate for the role: {role}.
+
+CONTEXT PROVIDED:
+- Candidate Resume Analysis
+- Skill Gap Results  
+- Target Job Role
+- Project Details
+
+YOUR TASK:
+Simulate how a recruiter would HONESTLY evaluate this candidate. Be realistic, not flattering.
+
+EVALUATION CRITERIA:
+
+1️⃣ Resume Signal Strength (0-100)
+   - ATS friendliness (formatting, keywords, structure)
+   - Skill clarity (how well skills are presented)
+   - Role alignment (relevance to target position)
+
+2️⃣ Skill Match Score (0-100)
+   - Core skills match (must-have skills for the role)
+   - Missing critical skills (dealbreakers)
+   - Skill depth vs breadth
+
+3️⃣ Project Relevance Score (0-100)
+   - How relevant projects are to the role
+   - Depth vs buzzwords (real impact vs fluff)
+   - Technical complexity demonstrated
+
+4️⃣ Interview Probability (0-100)
+   - Realistic probability of being shortlisted
+   - Based on all factors combined
+
+AI INSIGHT REQUIREMENTS:
+- Explain WHY recruiter would shortlist or reject
+- Identify what HURTS the profile MOST (be specific)
+- Recommend what improves chances FASTEST (prioritized actions)
+- Tailor feedback strictly to the role
+- NO generic feedback, NO fake promises
+
+OUTPUT STRICT JSON:
+{
+  "resumeSignalStrength": number (0-100),
+  "skillMatchScore": number (0-100),
+  "projectRelevanceScore": number (0-100),
+  "interviewProbability": number (0-100),
+  "summary": "string (2-3 sentence professional summary of candidate standing)",
+  "recruiterInsight": "string (Honest, direct feedback: Why shortlist/reject? What hurts most? What helps most? Be brutally honest but constructive.)",
+  "strengths": ["string (specific strengths that help their case)"],
+  "weaknesses": ["string (specific weaknesses that hurt their chances)"],
+  "improvementActions": ["string (prioritized actions ranked by impact - what to fix FIRST for fastest improvement)"],
+  "verdict": "Shortlisted | Borderline | Rejected"
+}
+
+CANDIDATE PROFILE:
+Skills: {skills}
+Experience: {experience}
+Projects: {projects}
+Target Role: {role}
+
+Remember: Be honest, not flattering. Help them understand exactly how they look to a recruiter and what matters most.`;
+
+export const evaluateHiringSignal = async (userId, targetRole) => {
+  try {
+    const { User } = await import('../../models/User.js');
+    const { ResumeData } = await import('../../models/AIModels.js');
+
+    const user = await User.findById(userId);
+    const resume = await ResumeData.findOne({ user: userId });
+
+    if (!user) throw new Error('User not found');
+
+    const profile = {
+      skills: user.skills || [],
+      experience: user.experience || 'Student/Fresher',
+      projects: resume?.parsed?.projects || []
+    };
+
+    const userPrompt = `Candidate Profile:
+Skills: ${profile.skills.join(', ')}
+Experience: ${profile.experience}
+Projects: ${profile.projects.join('; ')}
+
+Target Role: ${targetRole}`;
+
+    const completion = await llmComplete({
+      systemPrompt: HIRING_SIGNAL_PROMPT.replace('{role}', targetRole)
+        .replace('{skills}', profile.skills.join(', '))
+        .replace('{experience}', profile.experience)
+        .replace('{projects}', profile.projects.join(', ')),
+      userPrompt
+    });
+
+    return JSON.parse(stripMarkdown(completion));
+  } catch (error) {
+    console.error('Hiring Signal Evaluation Error:', error);
+    return {
+      resumeSignalStrength: 65,
+      skillMatchScore: 70,
+      projectRelevanceScore: 60,
+      interviewProbability: 40,
+      summary: "Evaluation unavailable.",
+      recruiterInsight: "Unable to process detailed signals. Focus on core skills.",
+      strengths: [],
+      weaknesses: [],
+      improvementActions: []
     };
   }
 };

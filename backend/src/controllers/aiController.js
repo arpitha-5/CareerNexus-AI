@@ -12,6 +12,8 @@ import {
 import { generateCareerRoadmap } from '../services/ai/careerRoadmapService.js';
 import { ResumeData, SkillProfile, LearningPath } from '../models/AIModels.js';
 import { Roadmap } from '../models/DomainModels.js';
+import { compareJobRoles } from '../services/ai/compareService.js';
+import { generateCompanyInterviewQuestions } from '../services/ai/interviewService.js';
 
 // POST /api/ai/upload-resume (multipart)
 export const uploadResumeController = async (req, res, next) => {
@@ -196,6 +198,49 @@ export const analyzeCareerRiskController = async (req, res, next) => {
 
     const { analyzeCareerRisk } = await import('../services/ai/services.js');
     const result = await analyzeCareerRisk(req.user._id, targetRole);
+    res.json(result);
+  } catch (err) {
+    next(err);
+  }
+};
+
+// POST /api/ai/compare-roles
+export const compareRolesController = async (req, res, next) => {
+  try {
+    const { roleA, roleB } = req.body;
+    if (!roleA || !roleB) return res.status(400).json({ message: 'Both roles are required' });
+
+    const result = await compareJobRoles(req.user._id, roleA, roleB);
+    res.json(result);
+  } catch (err) {
+    next(err);
+  }
+};
+
+// POST /api/ai/interview/company-questions
+export const generateCompanyInterviewController = async (req, res, next) => {
+  try {
+    const { company, role } = req.body;
+    if (!company) return res.status(400).json({ message: 'Company name is required' });
+
+    const result = await generateCompanyInterviewQuestions(req.user._id, {
+      company,
+      role: role || 'Software Engineer' // default role
+    });
+    res.json(result);
+  } catch (err) {
+    next(err);
+  }
+};
+
+// POST /api/ai/career/evaluate-signal
+export const evaluateHiringSignalController = async (req, res, next) => {
+  try {
+    const { targetRole } = req.body;
+    if (!targetRole) return res.status(400).json({ message: 'Target role is required' });
+
+    const { evaluateHiringSignal } = await import('../services/ai/services.js');
+    const result = await evaluateHiringSignal(req.user._id, targetRole);
     res.json(result);
   } catch (err) {
     next(err);

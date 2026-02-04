@@ -49,7 +49,18 @@ const skillProfileSchema = new mongoose.Schema(
     roleTarget: String, // Keep for backward compat if needed, or map to targetRole
     currentSkills: [{ name: String, level: Number }],
     weakAreas: [{ name: String, level: Number }],
-    comparisonSummary: String
+    weakAreas: [{ name: String, level: Number }],
+    comparisonSummary: String,
+    dependencyGraph: [
+      {
+        skill: String,
+        prerequisites: [String],
+        unlocks: [String],
+        reason: String,
+        topics: [String],
+        resources: [{ name: String, url: String }]
+      }
+    ]
   },
   { timestamps: true }
 );
@@ -112,9 +123,34 @@ const chatbotHistorySchema = new mongoose.Schema(
   { timestamps: true }
 );
 
+const interviewPracticeSchema = new mongoose.Schema(
+  {
+    user: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+    company: String,
+    targetRole: String,
+    focusWeakAreas: Boolean,
+    questions: [
+      {
+        question: String,
+        type: String, // technical, behavioral
+        whyAsked: String,
+        whatItTests: String,
+        sampleAnswer: String,
+        userAnswer: String,
+        aiFeedback: String,
+        score: Number,
+        improvementTips: String
+      }
+    ],
+    completedAt: Date
+  },
+  { timestamps: true }
+);
+
 export const ResumeData = mongoose.model('ResumeData', resumeDataSchema);
 export const SkillProfile = mongoose.model('SkillProfile', skillProfileSchema);
 export const LearningPath = mongoose.model('LearningPath', learningPathSchema);
 export const QuizHistory = mongoose.model('QuizHistory', quizHistorySchema);
 export const ProgressTracking = mongoose.model('ProgressTracking', progressTrackingSchema);
 export const ChatbotHistory = mongoose.model('ChatbotHistory', chatbotHistorySchema);
+export const InterviewPractice = mongoose.model('InterviewPractice', interviewPracticeSchema);

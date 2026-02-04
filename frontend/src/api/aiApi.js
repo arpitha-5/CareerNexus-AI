@@ -20,3 +20,4 @@ export const chatbotMessage = (message) => client.post('/ai/chatbot', { message 
 export const getCareerGuidance = () => client.post('/ai/career');
 export const analyzeJobRoleMatch = (targetRole) => client.post('/ai/career/match-role', { targetRole });
 export const analyzeCareerRisk = (targetRole) => client.post('/ai/career-risk', { targetRole });
+export const evaluateHiringSignal = (targetRole) => client.post('/ai/career/evaluate-signal', { targetRole });
