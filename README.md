@@ -1388,13 +1388,6 @@ We welcome contributions! Here's how you can help:
 
 ---
 
-## 📄 License
-
-This project is licensed under the **ISC License**.
-
-For more details, see the LICENSE file in the repository.
-
----
 
 ## 🎯 Roadmap & Future Features
 
