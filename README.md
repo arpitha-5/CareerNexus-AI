@@ -1,6 +1,5 @@
 # 🚀 CareerNexus App - Complete Documentation
 
-![CareerNexus Banner]()
 
 **CareerNexus** is an innovative AI-powered career guidance and skill development platform built with modern technologies. It provides personalized career recommendations, skill assessments, learning roadmaps, and comprehensive career analytics for users seeking professional growth.
 
@@ -1322,24 +1321,6 @@ npm start
 
 ---
 
-## 👥 Development Team
-
-**CareerNexus** is developed and maintained by the **Neurospark Team** - a dedicated group of developers committed to building innovative career development solutions.
-
-### **Neurospark Team**
-- **Team Lead**: Arpitha
-- **Focus Area**: AI-powered career guidance and skill development platforms
-- **Based**: Global remote team
-- **Since**: 2026
-
-### **Project Contributors**
-- Frontend Development (React Native/Expo)
-- Backend Development (Node.js/Express)
-- Database Design (SQLite/MongoDB)
-- UI/UX Design
-- Quality Assurance & Testing
-- Documentation
-
 ### **Contact & Social**
 - **GitHub**: https://github.com/arpitha-5/CareerNexus-AI
 - **LinkedIn**: https://www.linkedin.com/in/arpitha-medarametla
@@ -1466,27 +1447,6 @@ A: Yes! The project structure is modular and easy to extend.
 - Express.js framework
 - All contributors and testers
 - Neurospark team members
-
----
-
-## 📝 Changelog
-
-### **Version 1.0.0** (February 2026)
-- ✅ Initial release
-- ✅ Core authentication system
-- ✅ Skill assessment module
-- ✅ Career recommendations engine
-- ✅ Learning roadmap generator
-- ✅ Report generation & download
-- ✅ Profile management
-- ✅ SQLite database integration
-- ✅ Render.com deployment ready
-
----
-
-**Last Updated**: February 4, 2026  
-**Maintained By**: Neurospark Team  
-**Version**: 1.0.0
 
 ---
 
